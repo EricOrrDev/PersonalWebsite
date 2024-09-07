@@ -26,13 +26,13 @@ function clearTerminal() {
 // Command-specific functions
 function showProjects() {
     const projectsString = `
-Increment MText     : <a href="https://github.com/EricOrrDev/Increment-Mtext">Increment MText</a>
+<b>Increment MText</b>     : <a href="https://github.com/EricOrrDev/Increment-Mtext" target="_blank">Increment MText</a>
     <i>A script for AutoCAD to increment text like MicroStation.</i>
-Resume API  : <a href="https://github.com/EricOrrDev/ResumeProject">Resume API</a>
+<b>Resume API</b>          : <a href="https://github.com/EricOrrDev/ResumeProject" target="_blank">Resume API</a>
     <i>A C++ API endpoint that delivers my resume.</i>
-WARGAMES            : <a href="https://github.com/EricOrrDev/WARGAMES">WARGAMES</a>
+<b>WARGAMES</b>            : <a href="https://github.com/EricOrrDev/WARGAMES" target="_blank">WARGAMES</a>
     <i>The classic prisoner's dilemma game written in C.</i>
-Terminal Portfolio  : <a href="https://github.com/EricOrrDev/Terminal-Website">Terminal</a>
+<b>Terminal Portfolio</b>  : <a href="https://github.com/EricOrrDev/Terminal-Website" target="_blank">Terminal</a>
     <i>This very website!</i>
     `;
     printToTerminal(projectsString);
