@@ -1,3 +1,4 @@
+const terminalOutput = document.getElementById('terminalOutput');
 const terminalInput = document.getElementById('terminalInput');
 const prompt = 'guest@EricOrr.com: >> ';
 
@@ -8,19 +9,49 @@ Welcome to my website!
 Type 'help' to see available commands.
 `;
 
-const helpText = `Available commands:\nhelp\nclear\nnav\nabout`;
+const helpText = `Available commands:<br>help<br>clear<br>nav<br>about`;
 const navText = `Navigation: [P]rojects, [C]ontact, [R]esume`;
 
 // Function to print text to the terminal
 function printToTerminal(text) {
-    terminalInput.value +='\n' + text + '\n';
-    terminalInput.selectionStart = terminalInput.selectionEnd = terminalInput.value.length;
-    terminalInput.scrollTop = terminalInput.scrollHeight;
+    terminalOutput.innerHTML += '<br>' + text;
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
 }
 
 // Function to clear the terminal
 function clearTerminal() {
-    terminalInput.value = '';
+    terminalOutput.innerHTML = '';
+}
+
+// Command-specific functions
+function showProjects() {
+    const projectsString = `
+Increment MText     : <a href="https://github.com/EricOrrDev/Increment-Mtext">Increment MText</a>
+    <i>A script for AutoCAD to increment text like MicroStation.</i>
+Resume API  : <a href="https://github.com/EricOrrDev/ResumeProject">Resume API</a>
+    <i>A C++ API endpoint that delivers my resume.</i>
+WARGAMES            : <a href="https://github.com/EricOrrDev/WARGAMES">WARGAMES</a>
+    <i>The classic prisoner's dilemma game written in C.</i>
+Terminal Portfolio  : <a href="https://github.com/EricOrrDev/Terminal-Website">Terminal</a>
+    <i>This very website!</i>
+    `;
+    printToTerminal(projectsString);
+}
+
+function showContact() {
+    const contactString = 'Eric Orr 503-983-3289 eric.orr.dev@gmail.com';
+    printToTerminal(contactString);
+}
+
+function showResume() {
+    const resumeString = `
+Summary:
+A computer science student looking for people to solve their problems.
+
+Work Experience:
+Prep Cook, Filberts Farmhouse Kitchen
+`;
+    printToTerminal(resumeString);
 }
 
 // Function to handle commands
@@ -41,56 +72,62 @@ function handleCommand(input) {
         case 'clear':
             clearTerminal();
             break;
+        case 'projects':
+        case 'p':
+            showProjects();
+            break;
+        case 'contact':
+        case 'c':
+            showContact();
+            break;
+        case 'resume':
+        case 'r':
+            showResume();
+            break;
         default:
             printToTerminal(`Unknown command: ${input}`);
     }
 }
 
 // Handle user input
+let currentInput = ''; // Store the current typed input
+
 terminalInput.addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
         event.preventDefault(); // Prevent default action
 
-        // Get all lines in the textarea
-        const lines = terminalInput.value.split('\n');
-        // Get the last line (where the user typed the command)
-        const lastLine = lines[lines.length - 1];
-        // Extract the command by removing the prompt from the last line and trim any extra spaces
-        const command = lastLine.slice(prompt.length).trim();
-
+        // Handle Enter key: process the command
+        const command = currentInput.trim(); // Get the command and trim spaces
         console.log('Command extracted:', command); // Debugging extracted command
-        handleCommand(command); // Handle the extracted and trimmed command
 
-        // Add a new prompt without moving the cursor to a new line
-        terminalInput.value += prompt;
-        terminalInput.selectionStart = terminalInput.selectionEnd = terminalInput.value.length; // Ensure cursor is at the end of the prompt
+        // Handle the command and output the result
+        handleCommand(command);
 
-        // Scroll to the bottom
-        terminalInput.scrollTop = terminalInput.scrollHeight;
+        // Clear the input for the next command
+        currentInput = '';
+
+        // Print a new prompt after the output (this prompt is for the next input)
+        printToTerminal(prompt);
+    } else if (event.key === 'Backspace') {
+        // Handle Backspace: remove the last character from current input
+        currentInput = currentInput.slice(0, -1);
+        // Update the terminal output (replace the last line with updated input)
+        const lines = terminalOutput.innerHTML.split('<br>');
+        lines[lines.length - 1] = prompt + currentInput; // Update the last line with the current input
+        terminalOutput.innerHTML = lines.join('<br>');
+    } else if (event.key.length === 1) {
+        // Handle regular character input
+        currentInput += event.key; // Add the character to the current input
+        // Update the terminal output (replace the last line with updated input)
+        const lines = terminalOutput.innerHTML.split('<br>');
+        lines[lines.length - 1] = prompt + currentInput; // Update the last line with the current input
+        terminalOutput.innerHTML = lines.join('<br>');
     }
+
+    // Scroll to the bottom
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
 });
 
-function showProjects(){
-    const projectsString = `
-    Increment MText     : https://github.com/EricOrrDev/Increment-Mtext
-    Resume API in C++   : https://github.com/EricOrrDev/ResumeProject
-    Terminal Portfolio  : stand in
-    `
-    printToTerminal(projectsString);
-}
-function showContact(){
-    const contactString = 'Eric Orr 503-983-3289 eric.orr.dev@gmail.com'
-    printToTerminal(contactString);
-    
-}
-function showResume(){
-    const resumeString = `
-    
-    `
-}
-
-// Initialize the terminal with the welcome message, and ensure the cursor is at the end of the prompt
-printToTerminal(welcomeMessage); // Print the welcome message without adding prompt here
-terminalInput.value += prompt; // Manually add the prompt
-terminalInput.selectionStart = terminalInput.selectionEnd = terminalInput.value.length; // Ensure the cursor is placed at the end
-terminalInput.scrollTop = terminalInput.scrollHeight; // Scroll to the bottom
+// Initialize the terminal with the welcome message and first prompt
+printToTerminal(welcomeMessage + '<br>' + prompt);
+terminalInput.focus(); // Ensure the hidden input is focused for typing
